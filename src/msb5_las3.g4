@@ -2,40 +2,44 @@ grammar msb5_las3;
 
 program: mainclass (classDeclaration)* EOF;
 
-mainclass: 'class' Identifier '{' 'public' 'static' 'void' 'main' '(' 'string' '[' ']';
+mainclass: 'class' identifier '{' 'public' 'static' 'void' 'main' '(' 'String' '[' ']' identifier ')' '{' statement '}' '}';
 
-classDeclaration : 'class' Identifier ( 'extends' Identifier )? '{' ( varDecl )* ( methodDecl )* '}';
+classDeclaration : 'class' identifier ( 'extends' identifier )? '{' ( varDecl )* ( methodDecl )* '}';
 
-varDecl : Type Identifier ';';
+varDecl : type identifier ';';
 
-methodDecl : 'public' Type Identifier '(' ( Type Identifier ( ',' Type Identifier )* )? ')' '{' ( varDecl )* ( statement )* 'return' exp ';' '}';
+methodDecl : 'public' type identifier '(' ( type identifier ( ',' type identifier )* )? ')' '{' ( varDecl )* ( statement )* 'return' exp ';' '}';
 
-Type : 'int' '[' ']'
+type : 'int' '[' ']'
 | 'boolean'
 | 'int'
-| Identifier;
+| identifier;
 
 statement : '{' ( statement )* '}'
 | 'if' '(' exp ')' statement 'else' statement
 | 'while' '(' exp ')' statement
-| 'system.out.println' '(' exp ')' ';'
-| Identifier '=' exp ';'
-| Identifier '[' exp ']' '=' exp ';';
+| 'System.out.println' '(' exp ')' ';'
+| identifier '=' exp ';'
+| identifier '[' exp ']' '=' exp ';';
 
 exp : exp ( '&&' | '<' | '+' | '-' | '*' ) exp
 | exp '[' exp ']'
 | exp '.' 'length'
-| exp '.' Identifier '(' ( exp ( ',' exp )* )? ')'
-| IntegerLiteral
+| exp '.' identifier '(' ( exp ( ',' exp )* )? ')'
+| INTEGER_LITERAL
 | 'true'
 | 'false'
-| Identifier
+| IDENTIFIER
 | 'this'
 | 'new' 'int' '[' exp ']'
-| 'new' Identifier '(' ')'
+| 'new' identifier '(' ')'
 | '!' exp
 | '(' exp ')';
 
-Identifier : [Aa-Zz]+[Aa-Zz|0-9]*;
+identifier: IDENTIFIER;
+IDENTIFIER: [a-zA-Z_]([a-zA-Z0-9_])*;
 
-IntegerLiteral : [0-9]+;
+INTEGER_LITERAL : ([0-9])+;
+WHITE_SPACE: [ \r\t\n] -> skip;
+SINGLE_LINE_COMMENT: '//'(~[\n\r])* -> skip;
+MULTI_LINE_COMENT: '/*' .*? '*/' -> skip;
